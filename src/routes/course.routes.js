@@ -10,7 +10,7 @@ import {
 export const courseRouter = new Router();
 courseRouter.get("/course/", authGuard, getAllCourseController);
 courseRouter.post(
-    "/course/new",
+    "/course",
     authGuard,
     roleGuard(["admin", "superAdmin"]),
     createCourseController

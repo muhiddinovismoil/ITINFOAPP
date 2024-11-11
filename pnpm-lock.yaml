@@ -20,6 +20,9 @@ importers:
       express:
         specifier: ^4.21.1
         version: 4.21.1
+      express-rate-limit:
+        specifier: ^7.4.1
+        version: 7.4.1(express@4.21.1)
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
@@ -215,6 +218,12 @@ packages:
   etag@1.8.1:
     resolution: {integrity: sha512-aIL5Fx7mawVa300al2BnEE4iNvo1qETxLrPI/o05L7z6go7fCw1J6EQmbK4FmJ2AS7kgVF/KEZWufBfdClMcPg==}
     engines: {node: '>= 0.6'}
+
+  express-rate-limit@7.4.1:
+    resolution: {integrity: sha512-KS3efpnpIDVIXopMc65EMbWbUht7qvTCdtCR2dD/IZmi9MIkopYESwyRqLgv8Pfu589+KqDqOdzJWW7AHoACeg==}
+    engines: {node: '>= 16'}
+    peerDependencies:
+      express: 4 || 5 || ^5.0.0-beta.1
 
   express@4.21.1:
     resolution: {integrity: sha512-YSFlK1Ee0/GC8QaO91tHcDxJiE/X4FbpAyQWkxAvG6AXCuR65YzK8ua6D9hvi/TzUfZMpc+BwuM1IPw8fmQBiQ==}
@@ -867,6 +876,10 @@ snapshots:
   escape-html@1.0.3: {}
 
   etag@1.8.1: {}
+
+  express-rate-limit@7.4.1(express@4.21.1):
+    dependencies:
+      express: 4.21.1
 
   express@4.21.1:
     dependencies:

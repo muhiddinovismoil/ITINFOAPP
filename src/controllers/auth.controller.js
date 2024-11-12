@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { User } from "../modules/index.js";
+import { User, OTP } from "../modules/index.js";
 import { genSalt, hash } from "bcrypt";
 import {
     statusCodes,
@@ -7,6 +7,7 @@ import {
     ApiError,
     logger,
 } from "../utils/index.js";
+import { otpGenerator, sendMail } from "../helpers/index.js";
 
 export const registerController = async (req, res, next) => {
     try {
@@ -14,8 +15,15 @@ export const registerController = async (req, res, next) => {
         const currentUser = await User.findOne({ email });
 
         if (!currentUser) {
+            const otp = otpGenerator();
+            sendMail(email, `otp","this is your OTP:`, otp);
             const user = new User(req.body);
             await user.save();
+            const db_otp = new OTP({
+                user_id: user._id,
+                otp_code: otp,
+            });
+            await db_otp.save();
             return res.status(statusCodes.CREATED).send("created");
         }
         return res
@@ -37,7 +45,11 @@ export const loginController = async (req, res, next) => {
                 .status(statusCodes.NOT_FOUND)
                 .send(errorMessages.USER_NOT_FOUND);
         }
-
+        if (currentUser.is_active == false) {
+            return res
+                .status(statusCodes.BAD_REQUEST)
+                .send("You are not able to login");
+        }
         const passwordIsEqual = await currentUser.compare(password);
 
         if (!passwordIsEqual) {
@@ -153,6 +165,46 @@ export const deleteAdminController = async (req, res, next) => {
                 .send(errorMessages.USER_NOT_FOUND);
         }
         res.status(statusCodes.OK).send("deleted");
+    } catch (error) {
+        next(new ApiError(error.statusCode, error.message));
+    }
+};
+
+export const verifyController = async (req, res, next) => {
+    try {
+        const { otp, email } = req.body;
+        const currentUser = await User.findOne({ email });
+        const currentOtp = await OTP.findOne({ user_id: currentUser._id });
+        const isEqual = currentOtp.verify(otp);
+        if (!isEqual) {
+            return res.send("OTP is not valid");
+        }
+        await OTP.deleteOne({ user_id: currentUser._id });
+        await User.updateOne({ email }, { is_active: true });
+        res.send("User is activated");
+    } catch (error) {
+        next(new ApiError(error.statusCode, error.message));
+    }
+};
+export const forgetPasswordController = async (req, res, next) => {
+    try {
+        const { email, newpassword, otp } = req.body;
+        const currentUser = await User.findOne({ email });
+        if (!currentUser) return res.status(404).send("Not found");
+        const salt = await genSalt(10);
+        sendMail(
+            email,
+            `New Password`,
+            `Here is your new password: ${newpassword}`
+        );
+        const hashPassword = await hash(newpassword, salt);
+        await User.updateOne(
+            { email },
+            {
+                password: hashPassword,
+            }
+        );
+        res.status(statusCodes.OK).send("Updated");
     } catch (error) {
         next(new ApiError(error.statusCode, error.message));
     }

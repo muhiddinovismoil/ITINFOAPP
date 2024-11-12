@@ -2,16 +2,19 @@ import { Router } from "express";
 import {
     adminController,
     deleteAdminController,
+    forgetPasswordController,
     loginController,
     refreshTokenController,
     registerController,
     updateAdminController,
+    verifyController,
 } from "../controllers/index.js";
 import { authGuard, roleGuard } from "../middleware/index.js";
 export const authRouter = new Router();
 
 authRouter.post("/register", registerController);
 authRouter.post("/login", loginController);
+authRouter.post("/verify", verifyController);
 // TO REFRESH YOUR ACCESS TOKEN
 authRouter.post("/refreshToken", refreshTokenController);
 // TO ADD NEW ADMIN
@@ -35,3 +38,4 @@ authRouter.delete(
     roleGuard(["superAdmin"]),
     deleteAdminController
 );
+authRouter.put("/restore-password", forgetPasswordController);

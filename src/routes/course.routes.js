@@ -12,19 +12,19 @@ courseRouter.get("/course/", authGuard, getAllCourseController);
 courseRouter.post(
     "/course",
     authGuard,
-    roleGuard(["admin", "superAdmin"]),
+    roleGuard(["user", "admin", "superAdmin"]),
     createCourseController
 );
 courseRouter.get("/course/:name", authGuard, getByNameCourseController);
 courseRouter.put(
     "/course/:name",
     authGuard,
-    roleGuard(["admin", "superAdmin"]),
+    roleGuard(["user", "admin", "superAdmin"]),
     updateCourseController
 );
 courseRouter.delete(
     "/course/:name",
     authGuard,
-    roleGuard(["superAdmin"]),
+    roleGuard(["user", "superAdmin"]),
     deleteCourseController
 );

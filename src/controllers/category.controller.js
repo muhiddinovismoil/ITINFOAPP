@@ -1,17 +1,15 @@
-import { Category } from "../modules/index.js";
+import {
+    createCategory,
+    deleteCategory,
+    getCategory,
+    updateCategory,
+} from "../service/index.js";
 import { errorMessages, statusCodes, ApiError } from "../utils/index.js";
 
 export const getAllCategoryController = async (req, res, next) => {
     try {
-        const categories = await Category.find();
-        if (!categories) {
-            return res
-                .status(statusCodes.NOT_FOUND)
-                .send(errorMessages.USER_NOT_FOUND);
-        }
-        res.status(statusCodes.OK).send({
-            data: categories,
-        });
+        const categories = await getCategory();
+        res.status(statusCodes.OK).send(categories);
     } catch (error) {
         next(error);
     }
@@ -19,20 +17,8 @@ export const getAllCategoryController = async (req, res, next) => {
 export const createCategoryController = async (req, res, next) => {
     try {
         const { name, description } = req.body;
-        const data = await Category.findOne({ name });
-        if (!name || !description) {
-            return res
-                .status(statusCodes.NO_CONTENT)
-                .send("Values are not valid");
-        }
-        if (!data) {
-            const category = new Category(req.body);
-            await category.save();
-            return res.status(statusCodes.CREATED).send("created");
-        }
-        return res
-            .status(statusCodes.CONFLICT)
-            .send(errorMessages.INVALID_CATEGORY_DATA);
+        const data = await createCategory(name, description);
+        res.status(statusCodes.OK).send(data);
     } catch (error) {
         next(error);
     }
@@ -40,7 +26,7 @@ export const createCategoryController = async (req, res, next) => {
 export const updateCategoryController = async (req, res, next) => {
     try {
         const name = req.params.name;
-        const data = await Category.findOneAndUpdate({ name }, req.body);
+        const data = await updateCategory(name, req.body);
         if (!data) {
             return res
                 .status(statusCodes.NOT_FOUND)
@@ -54,13 +40,8 @@ export const updateCategoryController = async (req, res, next) => {
 export const deleteCategoryController = async (req, res, next) => {
     try {
         const name = req.params.name;
-        const data = await Category.findOneAndDelete({ name });
-        if (!data) {
-            return res
-                .status(statusCodes.NOT_FOUND)
-                .send(errorMessages.USER_NOT_FOUND);
-        }
-        res.status(statusCodes.OK).send("deleted");
+        const data = await deleteCategory(name);
+        res.status(statusCodes.OK).send(data);
     } catch (error) {
         next(error);
     }

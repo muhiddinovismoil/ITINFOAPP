@@ -1,17 +1,15 @@
-import { Course } from "../modules/index.js";
+import {
+    createCourse,
+    deleteCourse,
+    getCourse,
+    getCourseByName,
+    updateCourse,
+} from "../service/index.js";
 import { statusCodes, errorMessages, ApiError } from "../utils/index.js";
 export const getAllCourseController = async (req, res, next) => {
     try {
-        const data = await Course.find();
-        if (!data) {
-            return res
-                .status(statusCodes.NOT_FOUND)
-                .send(errorMessages.NOT_FOUND);
-        }
-        return res.status(statusCodes.OK).send({
-            message: "All courses",
-            data: data,
-        });
+        const data = await getCourse();
+        res.status(statusCodes.OK).send(data);
     } catch (error) {
         next(new ApiError(error.statusCode, error.message));
     }
@@ -19,32 +17,17 @@ export const getAllCourseController = async (req, res, next) => {
 export const getByNameCourseController = async (req, res, next) => {
     try {
         const name = req.params.name;
-        const data = await Course.findOne({ name });
-        if (!data) {
-            return res
-                .status(statusCodes.NOT_FOUND)
-                .send(errorMessages.NOT_FOUND);
-        }
-        res.status(statusCodes.OK).send({
-            message: "Course data",
-            data: data,
-        });
+        const data = await getCourseByName(name);
+        res.status(statusCodes.OK).send(data);
     } catch (error) {
         next(new ApiError(error.statusCode, error.message));
     }
 };
 export const createCourseController = async (req, res, next) => {
     try {
-        const name = req.body.name;
-        const data = await Course.findOne({ name });
-        if (!data) {
-            const newData = new Course(req.body);
-            await newData.save();
-            return res.status(statusCodes.OK).send({
-                message: "Course created",
-            });
-        }
-        return res.status(statusCodes.CONFLICT).send("sdfasdfas");
+        const { name, category_id, description } = req.body;
+        const data = await createCourse(name, category_id, description);
+        return res.status(statusCodes.CONFLICT).send(data);
     } catch (error) {
         next(new ApiError(error.statusCode, error.message));
     }
@@ -52,16 +35,8 @@ export const createCourseController = async (req, res, next) => {
 export const updateCourseController = async (req, res, next) => {
     try {
         const name = req.params.name;
-        const data = await Course.findOneAndUpdate({ name }, req.body);
-        if (!data) {
-            return res
-                .status(statusCodes.NOT_FOUND)
-                .send(errorMessages.NOT_FOUND);
-        }
-        res.status(statusCodes.OK).send({
-            message: "Course updated",
-            data: data,
-        });
+        const data = await updateCourse(name, req.body);
+        res.status(statusCodes.OK).send(data);
     } catch (error) {
         next(new ApiError(error.statusCode, error.message));
     }
@@ -69,16 +44,8 @@ export const updateCourseController = async (req, res, next) => {
 export const deleteCourseController = async (req, res, next) => {
     try {
         const name = req.params.name;
-        const data = await Course.findOneAndDelete({ name });
-        if (!data) {
-            return res
-                .status(statusCodes.NOT_FOUND)
-                .send(errorMessages.NOT_FOUND);
-        }
-        res.status(statusCodes.OK).send({
-            message: "Course deleted",
-            data: data,
-        });
+        const data = await deleteCourse(name);
+        res.status(statusCodes.OK).send(data);
     } catch (error) {
         next(new ApiError(error.statusCode, error.message));
     }

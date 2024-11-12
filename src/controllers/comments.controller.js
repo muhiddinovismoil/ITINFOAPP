@@ -1,16 +1,17 @@
-import { Comments } from "../modules/index.js";
+import {
+    createComment,
+    deleteComment,
+    getCommentByContent,
+    getComments,
+    updateComment,
+} from "../service/index.js";
 import { statusCodes, errorMessages, ApiError } from "../utils/index.js";
 export const getAllCommentsController = async (req, res, next) => {
     try {
-        const data = await Comments.find();
-        if (!data) {
-            return res
-                .status(statusCodes.NO_CONTENT)
-                .send(errorMessages.NOT_FOUND);
-        }
+        const data = await getComments();
         return res.status(statusCodes.OK).send({
             message: "All courses",
-            data: data,
+            Comments: data,
         });
     } catch (error) {
         next(new ApiError(error.statusCode, error.message));
@@ -19,14 +20,9 @@ export const getAllCommentsController = async (req, res, next) => {
 export const getByContentCommentController = async (req, res, next) => {
     try {
         const content = req.params.content;
-        const data = await Comments.findOne({ content });
-        if (!data) {
-            return res
-                .status(statusCodes.NOT_FOUND)
-                .send(errorMessages.NOT_FOUND);
-        }
+        const data = await getCommentByContent(content);
         return res.status(statusCodes.OK).send({
-            message: "Course data",
+            message: "Comment",
             data: data,
         });
     } catch (error) {
@@ -35,16 +31,15 @@ export const getByContentCommentController = async (req, res, next) => {
 };
 export const createCommentController = async (req, res, next) => {
     try {
-        const content = req.body.content;
-        const data = await Comments.findOne({ content });
-        if (!data) {
-            const newComment = new Comments(req.body);
-            await newComment.save();
-            return res.status(statusCodes.CREATED).send("created");
-        }
-        return res
-            .status(statusCodes.BAD_REQUEST)
-            .send("Not created with some issue");
+        const { content, course_id, article_id } = req.body;
+        const commentitems = req.body;
+        const data = await createComment(
+            content,
+            commentitems,
+            course_id,
+            article_id
+        );
+        res.send(data);
     } catch (error) {
         next(new ApiError(error.statusCode, error.message));
     }
@@ -52,16 +47,8 @@ export const createCommentController = async (req, res, next) => {
 export const updateCommentController = async (req, res, next) => {
     try {
         const content = req.params.content;
-        const data = await Comments.findOneAndUpdate({ content }, req.body);
-        if (!data) {
-            return res
-                .status(statusCodes.NO_CONTENT)
-                .send(errorMessages.NOT_FOUND);
-        }
-        res.status(statusCodes.OK).send({
-            message: "Comment updated",
-            data: data,
-        });
+        const data = await updateComment(content, req.body);
+        res.status(statusCodes.OK).send(data);
     } catch (error) {
         next(new ApiError(error.statusCode, error.message));
     }
@@ -69,16 +56,8 @@ export const updateCommentController = async (req, res, next) => {
 export const deleteCommentController = async (req, res, next) => {
     try {
         const content = req.params.content;
-        const data = await Comments.findOneAndDelete({ content });
-        if (!data) {
-            return res
-                .status(statusCodes.NO_CONTENT)
-                .send(errorMessages.NOT_FOUND);
-        }
-        res.status(statusCodes.OK).send({
-            message: "Comment deleted",
-            data: data,
-        });
+        const data = await deleteComment(content);
+        res.status(statusCodes.OK).send(data);
     } catch (error) {
         next(new ApiError(error.statusCode, error.message));
     }

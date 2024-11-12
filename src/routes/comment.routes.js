@@ -29,6 +29,6 @@ commentRouter.put(
 commentRouter.delete(
     "/comments/:content",
     authGuard,
-    roleGuard(["superAdmin"]),
+    roleGuard(["user", "superAdmin"]),
     deleteCommentController
 );

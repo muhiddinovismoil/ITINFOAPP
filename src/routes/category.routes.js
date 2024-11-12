@@ -23,6 +23,6 @@ categoryRoutes.put(
 categoryRoutes.delete(
     "/category/:name",
     authGuard,
-    roleGuard(["superAdmin"]),
+    roleGuard(["user", "superAdmin"]),
     deleteCategoryController
 );

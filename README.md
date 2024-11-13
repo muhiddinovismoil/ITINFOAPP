@@ -12,4 +12,5 @@ JWT_REFRESH_EXPIRES_IN=2d
 JWT_ACCESS_EXPIRES_IN=90d
 LOG_LEVEL=debug
 NODE_ENV=development
+APP_PASSWORD= please write your app password
 ```

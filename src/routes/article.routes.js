@@ -18,6 +18,7 @@ articleRoutes.post(
 );
 articleRoutes.put(
     "/article/:title",
+    validateArticle,
     authGuard,
     roleGuard(["admin", "superAdmin"]),
     updateArticlesController

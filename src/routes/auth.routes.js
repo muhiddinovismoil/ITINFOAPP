@@ -25,6 +25,7 @@ authRouter.post("/refreshToken", refreshTokenController);
 // TO ADD NEW ADMIN
 authRouter.post(
     "/admin",
+    validateUser,
     authGuard,
     roleGuard(["superAdmin"]),
     adminController
@@ -32,6 +33,7 @@ authRouter.post(
 // TO UPDATE ADMIN
 authRouter.put(
     "/admin/:email",
+    validateUser,
     authGuard,
     roleGuard(["superAdmin"]),
     updateAdminController

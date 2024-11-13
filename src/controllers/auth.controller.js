@@ -21,7 +21,7 @@ export const registerController = async (req, res, next) => {
         const currentUser = await register(email, role, req.body);
         return res.status(statusCodes.CREATED).send(currentUser);
     } catch (error) {
-        console.log(error);
+        logger.error(error);
         next(new ApiError(error.statusCode, error.message));
     }
 };
@@ -35,6 +35,7 @@ export const loginController = async (req, res, next) => {
             refreshToken: currentUser.refresh,
         });
     } catch (error) {
+        logger.error(error);
         next(new ApiError(error.statusCode, error.message));
     }
 };
@@ -47,6 +48,7 @@ export const refreshTokenController = async (req, res, next) => {
             refreshToken: refreshedTokens.refreshToken,
         });
     } catch (error) {
+        logger.error(error);
         next(new ApiError(error.statusCode, error.message));
     }
 };
@@ -57,6 +59,7 @@ export const adminController = async (req, res, next) => {
         const result = await createAdmin(email, req.body);
         return res.status(statusCodes.CREATED).send(result);
     } catch (error) {
+        logger.error(error);
         next(new ApiError(error.statusCode, error.message));
     }
 };
@@ -73,6 +76,7 @@ export const updateAdminController = async (req, res, next) => {
         );
         res.status(statusCodes.OK).send(user);
     } catch (error) {
+        logger.error(error);
         next(new ApiError(error.statusCode || 500, error.message));
     }
 };
@@ -82,6 +86,7 @@ export const deleteAdminController = async (req, res, next) => {
         const users = await deleteAdmin(email);
         res.status(statusCodes.OK).send(users);
     } catch (error) {
+        logger.error(error);
         next(new ApiError(error.statusCode, error.message));
     }
 };
@@ -92,6 +97,7 @@ export const verifyController = async (req, res, next) => {
         const verifyAcc = await verification(email, otp);
         res.status(statusCodes.OK).send(verifyAcc);
     } catch (error) {
+        logger.error(error);
         next(new ApiError(error.statusCode, error.message));
     }
 };
@@ -101,6 +107,7 @@ export const forgetPasswordController = async (req, res, next) => {
         const currentUser = await restorePassword(email, newpassword, otp);
         res.status(statusCodes.OK).send(currentUser);
     } catch (error) {
+        logger.error(error);
         next(new ApiError(error.statusCode, error.message));
     }
 };

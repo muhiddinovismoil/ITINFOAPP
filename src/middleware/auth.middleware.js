@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { userValidator } from "../validators/index.js";
+import { logger } from "../utils/winstonLogger.js";
 export const authGuard = (req, res, next) => {
     try {
         if (!req.headers.authorization) {
@@ -22,6 +23,7 @@ export const authGuard = (req, res, next) => {
             next();
         });
     } catch (error) {
+        logger.error(error);
         next(error);
     }
 };

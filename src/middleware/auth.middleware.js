@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-
+import { userValidator } from "../validators/index.js";
 export const authGuard = (req, res, next) => {
     try {
         if (!req.headers.authorization) {
@@ -21,6 +21,14 @@ export const authGuard = (req, res, next) => {
 
             next();
         });
+    } catch (error) {
+        next(error);
+    }
+};
+export const validateUser = (req, res, next) => {
+    try {
+        userValidator.parse(req.body);
+        next();
     } catch (error) {
         next(error);
     }

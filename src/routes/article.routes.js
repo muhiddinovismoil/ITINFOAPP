@@ -6,10 +6,12 @@ import {
     deleteArticlesController,
 } from "../controllers/index.js";
 import { authGuard, roleGuard } from "../middleware/index.js";
+import { validateArticle } from "../middleware/article.middleware.js";
 export const articleRoutes = new Router();
 articleRoutes.get("/article", authGuard, getAllArticlesController);
 articleRoutes.post(
     "/article",
+    validateArticle,
     authGuard,
     roleGuard(["admin", "superAdmin"]),
     createArticlesController

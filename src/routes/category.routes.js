@@ -5,11 +5,12 @@ import {
     getAllCategoryController,
     updateCategoryController,
 } from "../controllers/index.js";
-import { authGuard, roleGuard } from "../middleware/index.js";
+import { authGuard, roleGuard,validateCategory } from "../middleware/index.js";
 export const categoryRoutes = new Router();
 categoryRoutes.get("/category", authGuard, getAllCategoryController);
 categoryRoutes.post(
     "/category",
+    validateCategory,
     authGuard,
     roleGuard(["admin", "superAdmin"]),
     createCategoryController

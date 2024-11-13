@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authGuard, roleGuard } from "../middleware/index.js";
+import { authGuard, roleGuard, validateComments } from "../middleware/index.js";
 import {
     createCommentController,
     deleteCommentController,
@@ -16,12 +16,14 @@ commentRouter.get(
 );
 commentRouter.post(
     "/comments",
+    validateComments,
     authGuard,
     roleGuard(["admin", "superAdmin"]),
     createCommentController
 );
 commentRouter.put(
     "/comments/:content",
+    validateComments,
     authGuard,
     roleGuard(["admin", "superAdmin"]),
     updateCommentController

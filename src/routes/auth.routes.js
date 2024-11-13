@@ -9,12 +9,17 @@ import {
     updateAdminController,
     verifyController,
 } from "../controllers/index.js";
-import { authGuard, roleGuard } from "../middleware/index.js";
+import {
+    authGuard,
+    roleGuard,
+    validateOtp,
+    validateUser,
+} from "../middleware/index.js";
 export const authRouter = new Router();
 
-authRouter.post("/register", registerController);
-authRouter.post("/login", loginController);
-authRouter.post("/verify", verifyController);
+authRouter.post("/register", validateUser, registerController);
+authRouter.post("/login", validateUser, loginController);
+authRouter.post("/verify", validateOtp, verifyController);
 // TO REFRESH YOUR ACCESS TOKEN
 authRouter.post("/refreshToken", refreshTokenController);
 // TO ADD NEW ADMIN

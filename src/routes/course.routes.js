@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authGuard, roleGuard } from "../middleware/index.js";
+import { authGuard, roleGuard, validateCourse } from "../middleware/index.js";
 import {
     createCourseController,
     deleteCourseController,
@@ -11,6 +11,7 @@ export const courseRouter = new Router();
 courseRouter.get("/course/", authGuard, getAllCourseController);
 courseRouter.post(
     "/course",
+    validateCourse,
     authGuard,
     roleGuard(["user", "admin", "superAdmin"]),
     createCourseController
@@ -18,6 +19,7 @@ courseRouter.post(
 courseRouter.get("/course/:name", authGuard, getByNameCourseController);
 courseRouter.put(
     "/course/:name",
+    validateCourse,
     authGuard,
     roleGuard(["user", "admin", "superAdmin"]),
     updateCourseController

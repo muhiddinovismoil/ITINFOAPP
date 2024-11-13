@@ -8,7 +8,7 @@ import {
     updateCourseController,
 } from "../controllers/index.js";
 export const courseRouter = new Router();
-courseRouter.get("/course/", authGuard, getAllCourseController);
+courseRouter.get("/course", authGuard, getAllCourseController);
 courseRouter.post(
     "/course",
     validateCourse,
